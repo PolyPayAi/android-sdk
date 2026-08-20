@@ -1,0 +1,25 @@
+<resources>
+    <string name="polypay_title">PolyPay Checkout</string>
+    <string name="polypay_loading">Loading payment details…</string>
+    <string name="polypay_choose_method">Choose how to pay</string>
+    <string name="polypay_choose_currency">Currency</string>
+    <string name="polypay_choose_network">Network</string>
+    <string name="polypay_continue">Continue to payment</string>
+    <string name="polypay_amount_due">Amount due</string>
+    <string name="polypay_send_exact">Send the exact amount to this address</string>
+    <string name="polypay_scan">Scan the address QR code with your wallet</string>
+    <string name="polypay_copy_amount">Copy amount</string>
+    <string name="polypay_copy_address">Copy address</string>
+    <string name="polypay_copied">Copied</string>
+    <string name="polypay_change_method">Change payment method</string>
+    <string name="polypay_waiting">Waiting for payment</string>
+    <string name="polypay_confirming">Payment detected. Waiting for network confirmation…</string>
+    <string name="polypay_submitted">Payment confirmed by PolyPay. Your merchant will verify the order.</string>
+    <string name="polypay_expired">This payment session has expired.</string>
+    <string name="polypay_cancelled">This payment was cancelled.</string>
+    <string name="polypay_retry">Retry</string>
+    <string name="polypay_close">Close</string>
+    <string name="polypay_error">Unable to load checkout</string>
+    <string name="polypay_fee">Estimated network fee: %1$s %2$s</string>
+    <string name="polypay_security_note">Final fulfillment must be confirmed by the merchant server.</string>
+</resources>
