@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ai.polypay.checkout.PolyPayCheckoutContract
 import ai.polypay.checkout.PolyPayCheckoutOptions
 
-/** Minimal merchant app demonstrating server-created native checkout. */
+/** Minimal merchant app demonstrating server-created wallet-first native checkout. */
 class MainActivity : AppCompatActivity() {
     private lateinit var checkoutUrl: EditText
     private lateinit var resultLabel: TextView
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         }
         resultLabel = TextView(this)
         val button = Button(this).apply {
-            text = "Open native PolyPay checkout"
+            text = "Open wallet-first PolyPay checkout"
             isAllCaps = false
             setOnClickListener { openCheckout() }
         }

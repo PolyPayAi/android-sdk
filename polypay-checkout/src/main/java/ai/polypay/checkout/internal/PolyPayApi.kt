@@ -4,6 +4,7 @@ import ai.polypay.checkout.model.CheckoutOrder
 import ai.polypay.checkout.model.CheckoutStatus
 import ai.polypay.checkout.model.NetworkFeeQuote
 import ai.polypay.checkout.model.PaymentMethodGroup
+import ai.polypay.checkout.model.WalletPaymentRequest
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -54,6 +55,25 @@ internal class PolyPayApi(apiBaseUrl: String) {
             status = data.getInt("status"),
             confirmations = data.optInt("confirmations"),
             requiredConfirmations = data.optInt("required_confirmations"),
+        )
+    }
+
+    /** Loads server-locked wallet transaction parameters for an eligible order. */
+    fun prepareWalletPayment(tradeId: String): WalletPaymentRequest {
+        val data = request(
+            "POST",
+            "/public/order/wallet-payment/prepare",
+            JSONObject().put("trade_id", tradeId),
+        )
+        return WalletPaymentRequest(
+            network = data.getString("network"),
+            chainId = data.getString("chain_id"),
+            assetType = data.getString("asset_type"),
+            tokenContract = data.optString("token_contract"),
+            currency = data.getString("currency"),
+            recipient = data.getString("recipient"),
+            displayAmount = data.getString("display_amount"),
+            amountBaseUnits = data.getString("amount_base_units"),
         )
     }
 

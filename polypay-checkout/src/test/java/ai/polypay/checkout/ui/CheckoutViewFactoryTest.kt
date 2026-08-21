@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import ai.polypay.checkout.model.CheckoutOrder
 import ai.polypay.checkout.model.PaymentMethodGroup
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -50,14 +51,22 @@ class CheckoutViewFactoryTest {
         assertTrue(allText(view).contains("Ethereum"))
     }
 
-    /** Proves the native payment page renders exact amount, network, and address. */
+    /** Proves the native payment page renders wallet-first actions without a QR prompt. */
     @Test
     fun rendersPaymentPage() {
-        val view = factory.payment(order, "Waiting for payment", onChangeMethod = {}, onClose = {})
+        val view = factory.payment(
+            order,
+            "Waiting for payment",
+            onOpenWallet = {},
+            onChangeMethod = {},
+            onClose = {},
+        )
         val text = allText(view)
         assertTrue(text.contains("10.01 USDT"))
         assertTrue(text.contains("TXAddress123456789"))
         assertTrue(text.contains("USDT · Tron"))
+        assertTrue(text.contains("Open wallet"))
+        assertFalse(text.contains("QR"))
     }
 
     /** Collects text recursively from a native view hierarchy. */
