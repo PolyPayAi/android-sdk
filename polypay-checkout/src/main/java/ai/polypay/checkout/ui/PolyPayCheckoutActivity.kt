@@ -3,6 +3,7 @@ package ai.polypay.checkout.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +15,7 @@ import ai.polypay.checkout.PolyPayCheckoutResult
 import ai.polypay.checkout.R
 import ai.polypay.checkout.internal.PolyPayApi
 import ai.polypay.checkout.internal.PolyPayApiException
+import ai.polypay.checkout.internal.WalletPaymentUri
 import ai.polypay.checkout.model.CheckoutOrder
 import ai.polypay.checkout.model.PaymentMethodGroup
 import ai.polypay.checkout.model.PaymentSelection
@@ -30,6 +32,8 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
     private var currentOrder: CheckoutOrder? = null
     private var methods: List<PaymentMethodGroup> = emptyList()
     private var errorCode: String? = null
+    private var walletPaymentUri: String? = null
+    private var walletPreparationComplete = false
 
     /** Initializes the secure API boundary and loads the server-created checkout. */
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,6 +111,8 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
     private fun selectMethod(selection: PaymentSelection) {
         val order = currentOrder ?: return
         showSelection(order, busy = true)
+        walletPaymentUri = null
+        walletPreparationComplete = false
         background(
             work = { api.selectPaymentMethod(tradeId, selection.network, selection.currency) },
             success = { updated ->
@@ -116,8 +122,13 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
         )
     }
 
-    /** Renders the native QR/address page and starts lifecycle-safe polling. */
+    /** Prepares a compatible wallet request, renders payment, and starts polling. */
     private fun showPayment(order: CheckoutOrder) {
+        if (!walletPreparationComplete && order.status == STATUS_WAIT_PAY && WalletPaymentUri.isSupported(order)) {
+            prepareWalletPayment(order)
+            return
+        }
+        walletPreparationComplete = true
         val message = when (order.status) {
             STATUS_CONFIRMING -> getString(R.string.polypay_confirming)
             STATUS_SUCCESS, STATUS_ADMIN_MARKED_PAID -> getString(R.string.polypay_submitted)
@@ -126,6 +137,7 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
         show(viewFactory.payment(
             order = order,
             statusMessage = message,
+            onOpenWallet = walletPaymentUri?.let { uri -> { openWallet(uri) } },
             onChangeMethod = { loadMethods(order) },
             onClose = {
                 val outcome = if (order.status in setOf(STATUS_CONFIRMING, STATUS_SUCCESS, STATUS_ADMIN_MARKED_PAID)) {
@@ -136,6 +148,37 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
         ))
         handler.removeCallbacksAndMessages(null)
         if (order.status !in TERMINAL_STATUSES) handler.postDelayed(::pollStatus, pollIntervalMillis)
+    }
+
+    /** Loads and validates server-authoritative wallet parameters before exposing the wallet action. */
+    private fun prepareWalletPayment(order: CheckoutOrder) {
+        show(viewFactory.loading())
+        background(
+            work = {
+                val request = api.prepareWalletPayment(tradeId)
+                runCatching { WalletPaymentUri.build(request, order) }.getOrElse { error ->
+                    throw PolyPayApiException(
+                        "invalid_wallet_payment",
+                        error.message ?: "Wallet payment parameters are invalid",
+                    )
+                }
+            },
+            success = { uri ->
+                walletPaymentUri = uri
+                walletPreparationComplete = true
+                showPayment(order)
+            },
+        )
+    }
+
+    /** Opens a compatible wallet through Android's standard URI dispatch. */
+    private fun openWallet(paymentUri: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUri))
+        if (intent.resolveActivity(packageManager) == null) {
+            android.widget.Toast.makeText(this, R.string.polypay_wallet_unavailable, android.widget.Toast.LENGTH_LONG).show()
+            return
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.polypay_open_wallet)))
     }
 
     /** Polls for display updates; merchant fulfillment must still reconcile server-side. */
@@ -218,6 +261,7 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
         private const val EXTRA_API_BASE_URL = "ai.polypay.checkout.API_BASE_URL"
         private const val EXTRA_POLL_INTERVAL = "ai.polypay.checkout.POLL_INTERVAL"
         private const val STATUS_CHECKOUT_PENDING = 0
+        private const val STATUS_WAIT_PAY = 1
         private const val STATUS_SUCCESS = 2
         private const val STATUS_EXPIRED = 3
         private const val STATUS_CANCELLED = 4

@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.HorizontalScrollView
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RadioButton
@@ -19,7 +18,6 @@ import android.widget.Space
 import android.widget.TextView
 import android.widget.Toast
 import ai.polypay.checkout.R
-import ai.polypay.checkout.internal.QrCodeRenderer
 import ai.polypay.checkout.model.CheckoutOrder
 import ai.polypay.checkout.model.PaymentMethodGroup
 import ai.polypay.checkout.model.PaymentSelection
@@ -116,10 +114,11 @@ internal class CheckoutViewFactory(private val context: Context) {
         return page
     }
 
-    /** Builds the address, QR, exact amount, and observed-state payment page. */
+    /** Builds the wallet-first exact payment and observed-state page. */
     fun payment(
         order: CheckoutOrder,
         statusMessage: String,
+        onOpenWallet: (() -> Unit)?,
         onChangeMethod: () -> Unit,
         onClose: () -> Unit,
     ): View = page().apply {
@@ -131,17 +130,14 @@ internal class CheckoutViewFactory(private val context: Context) {
         addView(label("${order.actualAmount} ${order.currency}", 28, bold = true).apply {
             gravity = Gravity.CENTER
         }, matchMargins(bottom = 8))
+        onOpenWallet?.let { openWallet ->
+            addView(primaryButton(context.getString(R.string.polypay_open_wallet), openWallet), matchMargins(bottom = 12))
+        }
         addView(secondaryButton(context.getString(R.string.polypay_copy_amount)) {
             copy(order.actualAmount)
         }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(46)).apply { bottomMargin = dp(20) })
         if (order.address.isNotBlank()) {
-            addView(ImageView(context).apply {
-                setImageBitmap(QrCodeRenderer.render(order.address, dp(220)))
-                contentDescription = context.getString(R.string.polypay_scan)
-                setBackgroundColor(Color.WHITE)
-                setPadding(dp(12), dp(12), dp(12), dp(12))
-            }, LinearLayout.LayoutParams(dp(244), dp(244)).apply { bottomMargin = dp(10) })
-            addView(label(context.getString(R.string.polypay_scan), 13), margins(bottom = 18))
+            addView(sectionLabel(context.getString(R.string.polypay_receiving_address)), matchMargins())
             addView(label(order.address, 14).apply {
                 gravity = Gravity.CENTER
                 setTextIsSelectable(true)
@@ -149,6 +145,11 @@ internal class CheckoutViewFactory(private val context: Context) {
             addView(secondaryButton(context.getString(R.string.polypay_copy_address)) {
                 copy(order.address)
             }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(46)).apply { bottomMargin = dp(16) })
+        }
+        if (onOpenWallet == null) {
+            addView(label(context.getString(R.string.polypay_manual_payment), 13).apply {
+                gravity = Gravity.CENTER
+            }, matchMargins(bottom = 16))
         }
         addView(label("${order.currency} · ${order.network}", 15, bold = true), margins(bottom = 12))
         addView(secondaryButton(context.getString(R.string.polypay_change_method), onChangeMethod), matchMargins(bottom = 12))

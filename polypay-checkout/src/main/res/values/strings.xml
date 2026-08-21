@@ -7,7 +7,10 @@
     <string name="polypay_continue">Continue to payment</string>
     <string name="polypay_amount_due">Amount due</string>
     <string name="polypay_send_exact">Send the exact amount to this address</string>
-    <string name="polypay_scan">Scan the address QR code with your wallet</string>
+    <string name="polypay_open_wallet">Open wallet</string>
+    <string name="polypay_wallet_unavailable">No compatible wallet is installed for this payment.</string>
+    <string name="polypay_receiving_address">Receiving address</string>
+    <string name="polypay_manual_payment">Open your wallet and enter the exact address, amount, and network shown above.</string>
     <string name="polypay_copy_amount">Copy amount</string>
     <string name="polypay_copy_address">Copy address</string>
     <string name="polypay_copied">Copied</string>

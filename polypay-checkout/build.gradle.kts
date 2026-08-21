@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ai.polypay"
-version = "0.1.0"
+version = "0.1.1"
 
 android {
     namespace = "ai.polypay.checkout"
@@ -45,7 +45,6 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("com.google.zxing:core:3.5.3")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.test:core:1.6.1")

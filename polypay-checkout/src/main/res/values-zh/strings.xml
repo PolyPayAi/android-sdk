@@ -7,7 +7,10 @@
     <string name="polypay_continue">继续付款</string>
     <string name="polypay_amount_due">应付金额</string>
     <string name="polypay_send_exact">请向此地址转入准确金额</string>
-    <string name="polypay_scan">使用钱包扫描地址二维码</string>
+    <string name="polypay_open_wallet">打开钱包</string>
+    <string name="polypay_wallet_unavailable">未安装兼容本次付款的钱包。</string>
+    <string name="polypay_receiving_address">收款地址</string>
+    <string name="polypay_manual_payment">请在钱包中准确填写上方显示的地址、金额和网络。</string>
     <string name="polypay_copy_amount">复制金额</string>
     <string name="polypay_copy_address">复制地址</string>
     <string name="polypay_copied">已复制</string>

@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    implementation("ai.polypay:checkout:0.1.0")
+    implementation("ai.polypay:checkout:0.1.1")
 }
 ```
 
@@ -53,8 +53,11 @@ For an approved white-label checkout domain, add its exact lowercase hostname to
 1. Loads the checkout placeholder from PolyPay's public checkout API.
 2. Shows merchant-enabled currencies, networks, and server-provided fee estimates.
 3. Converts the placeholder to a payable order after the user confirms a method.
-4. Shows exact amount, address, scannable QR code, copy actions, network, and observed status.
-5. Returns only `CLOSED`, `PAYMENT_DETECTED`, `EXPIRED`, `CANCELLED`, or `ERROR`. There is deliberately no client-side `PAID` outcome.
+4. For supported EVM stablecoin payments, prepares server-locked transaction parameters and opens a compatible wallet through ERC-681.
+5. Always shows the exact amount, address, copy actions, network, and observed status for manual payment. The mobile page does not show a same-device QR code.
+6. Returns only `CLOSED`, `PAYMENT_DETECTED`, `EXPIRED`, `CANCELLED`, or `ERROR`. There is deliberately no client-side `PAID` outcome.
+
+The direct wallet action currently covers server-supported USDT/USDC transfers on Ethereum, Polygon, BSC, Base, Arbitrum, and Optimism. Tron and other methods use the explicit address/amount/network copy flow until a compatible native signing integration is available.
 
 Final fulfillment must use a verified webhook or an authenticated server-side order query.
 

@@ -36,5 +36,17 @@ internal data class CheckoutStatus(
     val requiredConfirmations: Int,
 )
 
+/** Server-authoritative parameters used to request a wallet transaction. */
+internal data class WalletPaymentRequest(
+    val network: String,
+    val chainId: String,
+    val assetType: String,
+    val tokenContract: String,
+    val currency: String,
+    val recipient: String,
+    val displayAmount: String,
+    val amountBaseUnits: String,
+)
+
 /** A user-selected currency and network pair. */
 internal data class PaymentSelection(val currency: String, val network: String)
