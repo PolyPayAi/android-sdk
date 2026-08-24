@@ -44,7 +44,12 @@ class MainActivity : AppCompatActivity() {
     /** Validates and opens the server-created checkout URL. */
     private fun openCheckout() {
         runCatching {
-            checkout.launch(PolyPayCheckoutOptions(checkoutUrl = checkoutUrl.text.toString()))
+            checkout.launch(
+                PolyPayCheckoutOptions(
+                    checkoutUrl = checkoutUrl.text.toString(),
+                    allowedCheckoutHosts = setOf("checkout.polypay.ai", "checkout.kkdev.pro"),
+                ),
+            )
         }.onFailure { resultLabel.text = it.message }
     }
 }

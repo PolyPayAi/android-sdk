@@ -133,6 +133,7 @@ internal class PolyPayApi(apiBaseUrl: String) {
         status = json.getInt("status"),
         expirationTime = json.optLong("expiration_time"),
         merchantName = json.optionalString("merchant_name"),
+        merchantAvatar = json.optionalString("merchant_avatar"),
     )
 
     /** Maps one network group and its fee quotes. */

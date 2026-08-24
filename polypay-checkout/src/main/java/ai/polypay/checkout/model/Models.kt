@@ -27,6 +27,7 @@ internal data class CheckoutOrder(
     val status: Int,
     val expirationTime: Long,
     val merchantName: String?,
+    val merchantAvatar: String? = null,
 )
 
 /** Status polling response from the public checkout API. */

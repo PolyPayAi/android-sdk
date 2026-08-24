@@ -1,5 +1,6 @@
 <resources>
     <string name="polypay_title">PolyPay 收银台</string>
+    <string name="polypay_secure_checkout">安全收银台</string>
     <string name="polypay_loading">正在加载付款信息…</string>
     <string name="polypay_choose_method">选择支付方式</string>
     <string name="polypay_choose_currency">币种</string>
@@ -25,4 +26,15 @@
     <string name="polypay_error">无法加载收银台</string>
     <string name="polypay_fee">预估网络费：%1$s %2$s</string>
     <string name="polypay_security_note">订单履约状态最终以商户服务端确认结果为准。</string>
+    <string name="polypay_requests_payment">向你发起收款</string>
+    <string name="polypay_merchant_order_id">商户订单号</string>
+    <string name="polypay_order_amount">订单金额</string>
+    <string name="polypay_selected_method">已选支付方式</string>
+    <string name="polypay_choose_currency_step">选择支付币种</string>
+    <string name="polypay_choose_network_step">选择转账网络</string>
+    <string name="polypay_recommended">推荐</string>
+    <string name="polypay_pay_with_method">使用 %1$s · %2$s%3$s 支付</string>
+    <string name="polypay_creating_payment">正在创建付款…</string>
+    <string name="polypay_close_checkout">关闭收银台</string>
+    <string name="polypay_navigate_back">返回上一页</string>
 </resources>

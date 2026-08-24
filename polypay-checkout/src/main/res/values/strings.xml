@@ -1,5 +1,6 @@
 <resources>
     <string name="polypay_title">PolyPay Checkout</string>
+    <string name="polypay_secure_checkout">Secure Checkout</string>
     <string name="polypay_loading">Loading payment details…</string>
     <string name="polypay_choose_method">Choose how to pay</string>
     <string name="polypay_choose_currency">Currency</string>
@@ -25,4 +26,15 @@
     <string name="polypay_error">Unable to load checkout</string>
     <string name="polypay_fee">Estimated network fee: %1$s %2$s</string>
     <string name="polypay_security_note">Final fulfillment must be confirmed by the merchant server.</string>
+    <string name="polypay_requests_payment">requests your payment</string>
+    <string name="polypay_merchant_order_id">Merchant Order ID</string>
+    <string name="polypay_order_amount">Order amount</string>
+    <string name="polypay_selected_method">Selected method</string>
+    <string name="polypay_choose_currency_step">Choose payment currency</string>
+    <string name="polypay_choose_network_step">Choose transfer network</string>
+    <string name="polypay_recommended">Recommended</string>
+    <string name="polypay_pay_with_method">Pay with %1$s · %2$s%3$s</string>
+    <string name="polypay_creating_payment">Creating payment…</string>
+    <string name="polypay_close_checkout">Close checkout</string>
+    <string name="polypay_navigate_back">Navigate back</string>
 </resources>

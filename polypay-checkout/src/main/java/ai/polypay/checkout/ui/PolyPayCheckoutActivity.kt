@@ -68,7 +68,7 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
 
     /** Loads the current order and decides which native page to show. */
     private fun loadCheckout() {
-        show(viewFactory.loading())
+        showLoading()
         background(
             work = { api.getCheckout(tradeId) },
             success = { order ->
@@ -85,7 +85,7 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
 
     /** Loads merchant-enabled methods for the selection page. */
     private fun loadMethods(order: CheckoutOrder) {
-        show(viewFactory.loading())
+        showLoading()
         background(
             work = { api.getPaymentMethods(tradeId) },
             success = { loaded ->
@@ -152,7 +152,7 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
 
     /** Loads and validates server-authoritative wallet parameters before exposing the wallet action. */
     private fun prepareWalletPayment(order: CheckoutOrder) {
-        show(viewFactory.loading())
+        showLoading()
         background(
             work = {
                 val request = api.prepareWalletPayment(tradeId)
@@ -169,6 +169,11 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
                 showPayment(order)
             },
         )
+    }
+
+    /** Shows loading with the same closed-result navigation as the Android system back action. */
+    private fun showLoading() {
+        show(viewFactory.loading { finishWith(PolyPayCheckoutResult.Outcome.CLOSED) })
     }
 
     /** Opens a compatible wallet through Android's standard URI dispatch. */

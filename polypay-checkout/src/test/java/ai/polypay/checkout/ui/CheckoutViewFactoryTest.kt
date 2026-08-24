@@ -46,7 +46,11 @@ class CheckoutViewFactoryTest {
         val text = allText(view)
         assertTrue(text.contains("USDT"))
         assertTrue(text.contains("USDC"))
-        assertTrue(text.contains("Tron"))
+        assertTrue(text.contains("TRON"))
+        assertTrue(text.contains("Selected method"))
+        assertTrue(text.contains("Choose payment currency"))
+        assertTrue(text.contains("Choose transfer network"))
+        assertTrue(text.contains("PolyPay Checkout"))
         findTextView(view, "USDC")?.performClick()
         assertTrue(allText(view).contains("Ethereum"))
     }
@@ -64,7 +68,7 @@ class CheckoutViewFactoryTest {
         val text = allText(view)
         assertTrue(text.contains("10.01 USDT"))
         assertTrue(text.contains("TXAddress123456789"))
-        assertTrue(text.contains("USDT · Tron"))
+        assertTrue(text.contains("USDT · TRON"))
         assertTrue(text.contains("Open wallet"))
         assertFalse(text.contains("QR"))
     }
