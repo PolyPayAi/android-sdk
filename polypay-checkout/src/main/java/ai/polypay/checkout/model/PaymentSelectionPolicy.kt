@@ -20,7 +20,7 @@ internal object PaymentSelectionPolicy {
 
     /** Returns every currency in stable display order without duplicates. */
     fun currencies(methods: List<PaymentMethodGroup>): List<String> {
-        val preferredOrder = listOf("USDT", "USDC", "BUSD", "DAI", "ETH", "BNB", "TRX", "TON")
+        val preferredOrder = listOf("USDT", "USDC", "BUSD", "DAI", "ETH", "BNB", "TRX", "GRAM")
         return methods.flatMap { it.currencies }.distinct().sortedWith(
             compareBy<String> { preferredOrder.indexOf(it).let { index -> if (index < 0) Int.MAX_VALUE else index } }
                 .thenBy { it },

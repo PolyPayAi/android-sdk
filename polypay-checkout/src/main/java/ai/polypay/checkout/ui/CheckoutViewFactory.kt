@@ -439,6 +439,7 @@ internal class CheckoutViewFactory(private val context: Context) {
             "eth" -> "ethereum"
             "trx" -> "tron"
             "bnb" -> "bsc"
+            "gram" -> "ton"
             "pol", "matic" -> "polygon"
             else -> symbol.lowercase()
         }
@@ -461,7 +462,7 @@ internal class CheckoutViewFactory(private val context: Context) {
         "SOL" -> "Solana"
         "POL", "MATIC" -> "Polygon"
         "BNB" -> "BNB"
-        "TON" -> "Gram (GRAM)"
+        "GRAM" -> "Gram"
         else -> null
     }
 
@@ -481,7 +482,7 @@ internal class CheckoutViewFactory(private val context: Context) {
             "BSC" -> "BNB"
             "Solana" -> "SOL"
             "Polygon" -> if (currency == "MATIC") "MATIC" else "POL"
-            "TON" -> "TON"
+            "TON" -> "GRAM"
             "BTC" -> "BTC"
             else -> null
         }
