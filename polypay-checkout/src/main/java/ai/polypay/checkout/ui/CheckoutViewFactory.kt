@@ -461,7 +461,7 @@ internal class CheckoutViewFactory(private val context: Context) {
         "SOL" -> "Solana"
         "POL", "MATIC" -> "Polygon"
         "BNB" -> "BNB"
-        "TON" -> "Toncoin"
+        "TON" -> "Gram (GRAM)"
         else -> null
     }
 
