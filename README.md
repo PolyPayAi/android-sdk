@@ -48,6 +48,20 @@ fun pay() = lifecycleScope.launch {
 
 For an approved white-label checkout domain, add its exact lowercase hostname to `allowedCheckoutHosts`. The SDK accepts HTTPS `/pay/{tradeId}` URLs only.
 
+## Google Play Compliance & Presentation Modes
+
+- **NATIVE (`PolyPayCheckoutMode.NATIVE`)**: Default. Direct Activity rendering. Ideal for physical goods, real-world services, or standalone/direct APK distribution without store billing rules.
+- **CUSTOM_TABS (`PolyPayCheckoutMode.CUSTOM_TABS`)**: Opens Chrome Custom Tabs to complete hosted checkout out-of-app and handles deep link returns. Recommended for digital goods on Google Play.
+
+```kotlin
+polyPayCheckout.launch(
+    PolyPayCheckoutOptions(
+        checkoutUrl = checkoutUrl,
+        mode = PolyPayCheckoutMode.CUSTOM_TABS
+    )
+)
+```
+
 ## Native flow
 
 1. Loads the checkout placeholder from PolyPay's public checkout API.
