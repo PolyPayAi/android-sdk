@@ -14,4 +14,19 @@ class PolyPayCheckoutResultTest {
             assertTrue(PolyPayCheckoutResult(outcome, "trade_12345678").requiresServerConfirmation)
         }
     }
+
+    /** Verifies checkout presentation mode options. */
+    @Test
+    fun checkoutModeDefaultsToNativeAndAllowsCustomTabs() {
+        val defaultOptions = PolyPayCheckoutOptions(checkoutUrl = "https://checkout.polypay.ai/pay/trade_12345678")
+        assertTrue(defaultOptions.mode == PolyPayCheckoutMode.NATIVE)
+
+        val customTabsOptions = PolyPayCheckoutOptions(
+            checkoutUrl = "https://checkout.polypay.ai/pay/trade_12345678",
+            mode = PolyPayCheckoutMode.CUSTOM_TABS
+        )
+        assertTrue(customTabsOptions.mode == PolyPayCheckoutMode.CUSTOM_TABS)
+        customTabsOptions.validate()
+    }
 }
+

@@ -2,12 +2,21 @@ package ai.polypay.checkout
 
 import java.net.URI
 
-/** Configuration for a native PolyPay checkout session. */
+/** Presentation mode for the checkout session. */
+enum class PolyPayCheckoutMode {
+    /** Native Activity rendering. Recommended for physical goods, offline services, or direct APK distribution. */
+    NATIVE,
+    /** Hosted web checkout via Chrome Custom Tabs or external browser. Recommended for Google Play compliance with digital goods. */
+    CUSTOM_TABS
+}
+
+/** Configuration for a PolyPay checkout session. */
 data class PolyPayCheckoutOptions(
     val checkoutUrl: String,
     val allowedCheckoutHosts: Set<String> = setOf("checkout.polypay.ai"),
     val apiBaseUrl: String = "https://api.polypay.ai/api/v1/pay",
     val pollIntervalMillis: Long = 5_000,
+    val mode: PolyPayCheckoutMode = PolyPayCheckoutMode.NATIVE,
 ) {
     /** Validates all network boundaries before the checkout activity starts. */
     fun validate() {

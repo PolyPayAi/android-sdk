@@ -10,6 +10,7 @@ import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import ai.polypay.checkout.CheckoutUrlParser
+import ai.polypay.checkout.PolyPayCheckoutMode
 import ai.polypay.checkout.PolyPayCheckoutOptions
 import ai.polypay.checkout.PolyPayCheckoutResult
 import ai.polypay.checkout.R
@@ -19,6 +20,7 @@ import ai.polypay.checkout.internal.WalletPaymentUri
 import ai.polypay.checkout.model.CheckoutOrder
 import ai.polypay.checkout.model.PaymentMethodGroup
 import ai.polypay.checkout.model.PaymentSelection
+import androidx.browser.customtabs.CustomTabsIntent
 import java.util.concurrent.Executors
 
 /** Native Android payment-method selection and payment activity. */
@@ -34,6 +36,7 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
     private var errorCode: String? = null
     private var walletPaymentUri: String? = null
     private var walletPreparationComplete = false
+    private var customTabsLaunched = false
 
     /** Initializes the secure API boundary and loads the server-created checkout. */
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +59,52 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
                 finishWith(PolyPayCheckoutResult.Outcome.CLOSED)
             }
         })
+
+        val modeName = intent.getStringExtra(EXTRA_MODE)
+        val mode = runCatching { PolyPayCheckoutMode.valueOf(modeName.orEmpty()) }.getOrDefault(PolyPayCheckoutMode.NATIVE)
+        if (mode == PolyPayCheckoutMode.CUSTOM_TABS) {
+            launchCustomTabsCheckout(checkoutUrl)
+            return
+        }
+
         loadCheckout()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val uri = intent.data
+        if (uri != null) {
+            val status = uri.getQueryParameter("status")?.lowercase()
+            when (status) {
+                "success", "paid" -> finishWith(PolyPayCheckoutResult.Outcome.PAYMENT_DETECTED)
+                "cancelled", "canceled" -> finishWith(PolyPayCheckoutResult.Outcome.CANCELLED)
+                else -> finishWith(PolyPayCheckoutResult.Outcome.CLOSED)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (customTabsLaunched) {
+            handler.postDelayed({
+                if (!isFinishing) {
+                    finishWith(PolyPayCheckoutResult.Outcome.CLOSED)
+                }
+            }, 500)
+        }
+    }
+
+    private fun launchCustomTabsCheckout(checkoutUrl: String) {
+        customTabsLaunched = true
+        val uri = Uri.parse(checkoutUrl)
+        try {
+            val customTabsIntent = CustomTabsIntent.Builder().build()
+            customTabsIntent.launchUrl(this, uri)
+        } catch (_: Exception) {
+            val browserIntent = Intent(Intent.ACTION_VIEW, uri)
+            startActivity(browserIntent)
+        }
     }
 
     /** Stops polling and background work when the checkout is destroyed. */
@@ -261,6 +309,7 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
         const val EXTRA_OUTCOME = "ai.polypay.checkout.OUTCOME"
         const val EXTRA_TRADE_ID = "ai.polypay.checkout.TRADE_ID"
         const val EXTRA_ERROR_CODE = "ai.polypay.checkout.ERROR_CODE"
+        const val EXTRA_MODE = "ai.polypay.checkout.MODE"
         private const val EXTRA_CHECKOUT_URL = "ai.polypay.checkout.CHECKOUT_URL"
         private const val EXTRA_ALLOWED_HOSTS = "ai.polypay.checkout.ALLOWED_HOSTS"
         private const val EXTRA_API_BASE_URL = "ai.polypay.checkout.API_BASE_URL"
@@ -281,5 +330,6 @@ class PolyPayCheckoutActivity : AppCompatActivity() {
                 .putStringArrayListExtra(EXTRA_ALLOWED_HOSTS, ArrayList(options.allowedCheckoutHosts))
                 .putExtra(EXTRA_API_BASE_URL, options.apiBaseUrl)
                 .putExtra(EXTRA_POLL_INTERVAL, options.pollIntervalMillis)
+                .putExtra(EXTRA_MODE, options.mode.name)
     }
 }
